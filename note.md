@@ -170,7 +170,7 @@ const cubeFolder = gui.addFolder('cube的操作');
 cubeFolder.add(cube.position, 'x').min(0).max(10).name('子元素的x平移').step(0.1).onChange(val => { console.log('x平移了', val); });
 
 // 可以添加onFinishChange事件，改变结束的时候才会触发
-cubeFolder.add(cube.position, 'y').min(0).max(10).name('子元素的y平移').step(0.1).onFinishChange(val => { console.log('x平移了', val); });
+cubeFolder.add(cube.position, 'y').min(0).max(10).name('子元素的y平移').step(0.1).onFinishChange(val => { console.log('y平移了', val); });
 
 cubeFolder.add(cube.position, 'z').min(0).max(10).name('子元素的z平移').step(0.1);
 
