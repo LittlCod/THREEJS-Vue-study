@@ -81,7 +81,7 @@ function animate() {
 animate();
 ```
 
-### 2.使用轨道控制器（OrbitControls）进行拖动旋转和缩放
+### 2.使用轨道控制器（OrbitControls）进行相机的拖动旋转和缩放
 Orbit controls（轨道控制器）可以使得相机围绕目标进行轨道运动。
 #### 主要代码
 ```JS
@@ -96,4 +96,92 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 // 自动旋转
 controls.autoRotate = true;
+```
+
+### 3.控制对象的Object3D基类的属性
+- 控制物体旋转:`Object3D.rotation.x | y | z`。
+- 控制物体平移:`Object3D.position.x | y | z`。
+- 控制物体缩放:`Object3D.scale.x | y | z`。
+这几个属性都是相对父元素的属性。
+```js
+let r = 1, s = 1, p = 1;
+// 渲染动画
+function animate() {
+    controls.update();
+    requestAnimationFrame(animate);
+    // 旋转
+    cube.rotation.x += 0.01 * r;
+    cube.rotation.y += 0.01 * r;
+    cube.rotation.z += 0.02 * r;
+    // 缩放
+    cube.scale.x += 0.02 * s;
+    cube.scale.y += 0.01 * s;
+    cube.scale.z += 0.03 * s;
+    // 位置
+    cube.position.x += 0.02 * p;
+    cube.position.y += 0.01 * p;
+    cube.position.z += 0.03 * p;
+
+    if(cube.scale.x > 5 || cube.scale.x < 0) s = -s;
+    if(cube.position.x > 3 || cube.position.x < 0) p = -p;
+    // 渲染
+    renderer.render(scene, camera);
+}
+animate();
+```
+
+### 4.重新刷新画布的方法（可用于适应窗口大小变化）
+```js
+// 重置渲染器宽高比
+renderer.setSize(window.innerWidth, window.innerHeight);
+// 重置相机的宽高比
+camera.aspect = window.innerWidth / window.innerHeight;
+// 更新相机投影矩阵
+camera.updateProjectionMatrix();
+```
+
+### 5.使用GUI操作物体
+引入GUI的代码
+`import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';`
+可以通过GUI使用按钮触发事件、修改数值、修改颜色、修改布尔值等等，支持链式编程，可以将多个操作项归入一个文件夹中。
+```js
+// 要加入GUI的函数
+const eventObj = {
+    fullscreen: function () {
+        // 全屏
+        document.body.requestFullscreen();
+    },
+    exitFullscreen: function () {
+        document.exitFullscreen();
+    }
+}
+
+// 添加GUI工具
+const gui = new GUI();
+gui.add(eventObj, 'fullscreen').name('全屏');
+gui.add(eventObj, 'exitFullscreen').name('退出全屏');
+// 控制Fcube的X轴旋转，可以使用链式编程
+// min是数值的最小值，max最大值，name是显示的label，step是滑块每次移动的间隔
+gui.add(Fcube.rotation, 'x').min(0).max(5).name('父元素的x旋转').step(0.1);
+// 创建文件夹
+const cubeFolder = gui.addFolder('cube的操作');
+
+// 可以添加onChange事件，改变的时候会触发
+cubeFolder.add(cube.position, 'x').min(0).max(10).name('子元素的x平移').step(0.1).onChange(val => { console.log('x平移了', val); });
+
+// 可以添加onFinishChange事件，改变结束的时候才会触发
+cubeFolder.add(cube.position, 'y').min(0).max(10).name('子元素的y平移').step(0.1).onFinishChange(val => { console.log('x平移了', val); });
+
+cubeFolder.add(cube.position, 'z').min(0).max(10).name('子元素的z平移').step(0.1);
+
+// 添加布尔值操作
+gui.add(material, 'wireframe').name('线框模式');
+
+// 颜色操作
+const colorParams = {
+    cubeColor: '#ff0000'
+}
+gui.addColor(colorParams, 'cubeColor').name('cube的颜色').onChange(val => {
+    cube.material.color.set(val);
+});
 ```
