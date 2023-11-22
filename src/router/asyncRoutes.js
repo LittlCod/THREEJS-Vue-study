@@ -29,6 +29,12 @@ const asyncRoutes = [
         meta: { title: '使用GUI控制物体'},
         component: () => import("@/views/4-gui.vue"),
     },
+    {
+        path: '/5',
+        name: '5',
+        meta: { title: '几何体相关'},
+        component: () => import("@/views/5-几何体.vue"),
+    },
 ];
 
 export default asyncRoutes;

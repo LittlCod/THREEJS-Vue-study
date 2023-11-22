@@ -185,3 +185,38 @@ gui.addColor(colorParams, 'cubeColor').name('cube的颜色').onChange(val => {
     cube.material.color.set(val);
 });
 ```
+
+### 6.几何体
+#### 使用BufferGeometry创建几何体
+```js
+// 创建几何体
+const geometry = new THREE.BufferGeometry();
+// 创建顶点数据，顶点是有序的，每三个为一个顶点，三点确定一个平面，逆时针为正面
+const vertices = new Float32Array([
+    0, 0, 1, 
+    1, 0, 0, 
+    0, 1, 0,
+    0, 0, 0,
+]);
+// 创建顶点属性
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+// 如果有共用顶点，可以创建索引
+const indices = new Uint16Array([
+    0, 1, 2,
+    0, 1, 3,
+    0, 2, 3,
+    1, 2, 3,
+]);
+// 创建索引属性
+geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+
+// 创建材质
+const material = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    side: THREE.DoubleSide,
+    wireframe: true
+});
+const plane = new THREE.Mesh(geometry, material)
+scene.add(plane);
+```
