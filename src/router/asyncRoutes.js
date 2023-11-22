@@ -32,8 +32,14 @@ const asyncRoutes = [
     {
         path: '/5',
         name: '5',
-        meta: { title: '几何体相关'},
+        meta: { title: '创建几何体'},
         component: () => import("@/views/5-几何体.vue"),
+    },
+    {
+        path: '/6',
+        name: '6',
+        meta: { title: '材质分组'},
+        component: () => import("@/views/6-材质分组.vue"),
     },
 ];
 

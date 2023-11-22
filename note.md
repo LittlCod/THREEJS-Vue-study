@@ -220,3 +220,36 @@ const material = new THREE.MeshBasicMaterial({
 const plane = new THREE.Mesh(geometry, material)
 scene.add(plane);
 ```
+#### 材质分组
+可以将一个几何体不同的面进行分组，来匹配不同的材质
+`geometry.addGroup(start: Integer, count: Integer, materialIndex: Integer);`
+>start 表明当前 draw call 中的没有索引的几何体的几何体的第一个顶点；或者第一个三角面片的索引。 count 指明当前分割包含多少顶点（或 indices）。 materialIndex 指出当前用到的材质队列的索引。
+```js
+// 设置两个顶点组，形成两个材质
+geometry.addGroup(0, 3, 0);
+geometry.addGroup(3, 3, 1);
+geometry.addGroup(6, 3, 2);
+geometry.addGroup(9, 3, 3);
+
+// 创建材质
+const material0 = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    side: THREE.DoubleSide,
+});
+const material1 = new THREE.MeshBasicMaterial({
+    color: 0xff00ff,
+    side: THREE.DoubleSide,
+});
+const material2 = new THREE.MeshBasicMaterial({
+    color: 0x00ffff,
+    side: THREE.DoubleSide,
+});
+const material3 = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    side: THREE.DoubleSide,
+});
+const plane = new THREE.Mesh(geometry, [material0, material1, material2, material3]);
+scene.add(plane);
+```
+#### 各种内置几何体
+[见官方文档](https://threejs.org/docs/index.html#api/zh/geometries/BoxGeometry)
