@@ -272,6 +272,37 @@ rgbeLoader.load('./textures/hdr/012.hdr', envMap => {
 });
 ```
 #### 常用的物体材质贴图
+使用`textureLoader`载入图片文件。
+```js
+// 创建纹理加载器
+const textureLoader = new THREE.TextureLoader();
+
+// 加载纹理
+const texture = textureLoader.load('./textures/onineko.jpg');
+// 加载ao贴图
+const aoMap = textureLoader.load('./textures/matcaps/1.png');
+// 加载alpha贴图
+const alphaMap = textureLoader.load('./textures/door/alpha.jpg');
+// 加载光照贴图
+const lightMap = textureLoader.load('./textures/matcaps/5.png');
+
+const planeMaterial = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
+    color: 0xffffff,
+    // map属性是纹理贴图
+    map: texture,
+    // 设置透明
+    transparent: true,
+    // 设置ao贴图（环境遮挡贴图）
+    aoMap: aoMap,
+    // 环境遮挡强度
+    aoMapIntensity: 0,
+    // 设置alpha贴图（灰度纹理贴图）
+    alphaMap: alphaMap,
+    // 设置光照贴图
+    lightMap: lightMap
+});
+```
 - #### map
   颜色贴图，可以选择包括一个alpha通道，可以加载图片。
 - #### aoMap
@@ -286,3 +317,5 @@ rgbeLoader.load('./textures/hdr/012.hdr', envMap => {
   材质使用的高光贴图。默认值为null。
 - #### reflectivity
   环境贴图对表面的影响程度; 见.combine。默认值为1，有效范围介于0（无反射）和1（完全反射）之间。
+### 纹理的颜色空间
+默认的颜色空间是`LinearSRGBColorSpace`，可能会比较白，可以更换为`SRGBColorSpace`，只需`texture.colorSpace = THREE.SRGBColorSpace;`即可。

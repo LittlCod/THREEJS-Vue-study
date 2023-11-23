@@ -67,9 +67,12 @@ const texture = textureLoader.load('./textures/onineko.jpg');
 // 加载ao贴图
 const aoMap = textureLoader.load('./textures/matcaps/1.png');
 // 加载alpha贴图
-const alphaMap = textureLoader.load('./textures/door/alpha.jpg');
+const alphaMap = textureLoader.load('./textures/particles/3.png');
 // 加载光照贴图
 const lightMap = textureLoader.load('./textures/matcaps/5.png');
+
+// 设置纹理的颜色空间
+texture.colorSpace = THREE.SRGBColorSpace;
 
 // 创建RGBE加载器，加载hdr贴图
 const rgbeLoader = new RGBELoader();
@@ -100,7 +103,7 @@ const planeMaterial = new THREE.MeshBasicMaterial({
     // 设置alpha贴图（灰度纹理贴图）
     // alphaMap: alphaMap,
     // 设置光照贴图
-    lightMap: lightMap
+    // lightMap: lightMap
 });
 // 也可以直接.map设置
 // planeMaterial.map = texture;
@@ -108,8 +111,28 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
 // gui辅助操作
+let guiControl = {
+    alphaMapShow: false,
+    lightMapShow: false
+};
 const gui = new GUI();
 gui.add(planeMaterial, 'aoMapIntensity').min(0).max(1).name('环境遮挡强度');
+gui.add(texture, 'colorSpace', {
+    sRGB: THREE.SRGBColorSpace,
+    Linear: THREE.LinearSRGBColorSpace
+}).name('颜色空间').onChange(val => {
+    texture.needsUpdate = true;
+});
+gui.add(guiControl, 'alphaMapShow').name('灰度纹理贴图').onChange(val => {
+    if(val) planeMaterial.alphaMap = alphaMap;
+    else planeMaterial.alphaMap = null;
+    texture.needsUpdate = true;
+});
+gui.add(guiControl, 'lightMapShow').name('光照贴图').onChange(val => {
+    if(val) planeMaterial.lightMap = lightMap;
+    else planeMaterial.lightMap = null;
+    texture.needsUpdate = true;
+});
 </script>
 
 <style scoped></style>
