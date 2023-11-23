@@ -41,6 +41,12 @@ const asyncRoutes = [
         meta: { title: '材质分组'},
         component: () => import("@/views/6-材质分组.vue"),
     },
+    {
+        path: '/7',
+        name: '7',
+        meta: { title: '材质贴图'},
+        component: () => import("@/views/7-材质贴图.vue"),
+    },
 ];
 
 export default asyncRoutes;

@@ -253,3 +253,36 @@ scene.add(plane);
 ```
 #### 各种内置几何体
 [见官方文档](https://threejs.org/docs/index.html#api/zh/geometries/BoxGeometry)
+
+### 7.材质贴图
+#### 背景图
+如果是单独的一张图片，直接设置`scene.background`即可。
+如果是hdr文件，则需要使用RGBELoader加载。
+```js
+// 导入hdr加载器
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+
+// 创建RGBE加载器，加载hdr贴图
+const rgbeLoader = new RGBELoader();
+rgbeLoader.load('./textures/hdr/012.hdr', envMap => {
+    // 设置球形贴图
+    envMap.mapping = THREE.EquirectangularReflectionMapping;
+    // 设置背景贴图
+    scene.background = envMap;
+});
+```
+#### 常用的物体材质贴图
+- #### map
+  颜色贴图，可以选择包括一个alpha通道，可以加载图片。
+- #### aoMap
+  该纹理的红色通道用作环境遮挡贴图，可以选择图片。
+- #### alphaMap
+  alpha贴图是一张灰度纹理，用于控制整个表面的不透明度。（黑色：完全透明；白色：完全不透明）。 默认值为null。
+- #### envMap
+  环境贴图。默认值为null。
+- #### lightMap
+  光照贴图。默认值为null。
+- #### specularMap
+  材质使用的高光贴图。默认值为null。
+- #### reflectivity
+  环境贴图对表面的影响程度; 见.combine。默认值为1，有效范围介于0（无反射）和1（完全反射）之间。
