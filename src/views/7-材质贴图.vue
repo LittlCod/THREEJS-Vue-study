@@ -76,7 +76,9 @@ texture.colorSpace = THREE.SRGBColorSpace;
 
 // 创建RGBE加载器，加载hdr贴图
 const rgbeLoader = new RGBELoader();
-rgbeLoader.load('./textures/hdr/012.hdr', envMap => {
+let envMapContainer = null;
+rgbeLoader.load('./textures/hdr/002.hdr', envMap => {
+    envMapContainer = envMap;
     // 设置球形贴图
     envMap.mapping = THREE.EquirectangularReflectionMapping;
     // 设置背景贴图
@@ -113,10 +115,12 @@ scene.add(plane);
 // gui辅助操作
 let guiControl = {
     alphaMapShow: false,
-    lightMapShow: false
+    lightMapShow: false,
+    envMapShow: false
 };
 const gui = new GUI();
 gui.add(planeMaterial, 'aoMapIntensity').min(0).max(1).name('环境遮挡强度');
+gui.add(planeMaterial, 'reflectivity').min(0).max(1).name('反射强度');
 gui.add(texture, 'colorSpace', {
     sRGB: THREE.SRGBColorSpace,
     Linear: THREE.LinearSRGBColorSpace
@@ -131,6 +135,11 @@ gui.add(guiControl, 'alphaMapShow').name('灰度纹理贴图').onChange(val => {
 gui.add(guiControl, 'lightMapShow').name('光照贴图').onChange(val => {
     if(val) planeMaterial.lightMap = lightMap;
     else planeMaterial.lightMap = null;
+    texture.needsUpdate = true;
+});
+gui.add(guiControl, 'envMapShow').name('环境贴图').onChange(val => {
+    if(val) planeMaterial.envMap = envMapContainer;
+    else planeMaterial.envMap = null;
     texture.needsUpdate = true;
 });
 </script>
