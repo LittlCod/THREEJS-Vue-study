@@ -47,6 +47,12 @@ const asyncRoutes = [
         meta: { title: '7.材质贴图'},
         component: () => import("@/views/7-材质贴图.vue"),
     },
+    {
+        path: '/8',
+        name: '8',
+        meta: { title: '8.雾'},
+        component: () => import("@/views/8-fog.vue"),
+    },
 ];
 
 export default asyncRoutes;

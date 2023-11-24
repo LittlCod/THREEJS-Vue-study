@@ -317,5 +317,34 @@ const planeMaterial = new THREE.MeshBasicMaterial({
   材质使用的高光贴图。默认值为null。
 - #### reflectivity
   环境贴图对表面的影响程度; 见.combine。默认值为1，有效范围介于0（无反射）和1（完全反射）之间。
-### 纹理的颜色空间
+#### 纹理的颜色空间
 默认的颜色空间是`LinearSRGBColorSpace`，可能会比较白，可以更换为`SRGBColorSpace`，只需`texture.colorSpace = THREE.SRGBColorSpace;`即可。
+
+### 8.雾化效果
+threejs可以创造雾效果，包含线性雾和指数雾。
+#### 线性雾
+```js
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog( 0xcccccc, 10, 15 );
+```
+使用`Fog( color : Integer, near : Float, far : Float )`构造线性雾化效果。
+> ##### .color : Color
+>雾的颜色。比如说，如果将其设置为黑色，远处的物体将被渲染成黑色。
+> ##### .near : Float
+>开始应用雾的最小距离。距离小于活动摄像机“near”个单位的物体将不会被雾所影响。
+>默认值是1。
+> ##### .far : Float
+>结束计算、应用雾的最大距离，距离大于活动摄像机“far”个单位的物体将不会被雾所影响。
+>默认值是1000。
+
+#### 指数雾
+```js
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+```
+使用`FogExp2( color : Integer, density : Float )`构造线性雾化效果。
+> ##### .color : Color
+>雾的颜色。比如说，如果将其设置为黑色，远处的物体将被渲染成黑色。
+> ##### .density : Float
+>定义雾的密度将会增长多块。
+>默认值是0.00025
