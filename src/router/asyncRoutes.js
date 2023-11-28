@@ -53,6 +53,24 @@ const asyncRoutes = [
         meta: { title: '8.雾'},
         component: () => import("@/views/8-fog.vue"),
     },
+    {
+        path: '/9',
+        name: '9',
+        meta: { title: '9.加载模型'},
+        component: () => import("@/views/9-gltf模型.vue"),
+    },
+    {
+        path: '/10',
+        name: '10',
+        meta: { title: '10.光线投射'},
+        component: () => import("@/views/10-光线投射.vue"),
+    },
+    {
+        path: '/11',
+        name: '11',
+        meta: { title: '11.Tween补间动画'},
+        component: () => import("@/views/11-Tween.vue"),
+    },
 ];
 
 export default asyncRoutes;

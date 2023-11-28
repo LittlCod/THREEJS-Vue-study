@@ -342,9 +342,86 @@ scene.fog = new THREE.Fog( 0xcccccc, 10, 15 );
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 ```
-使用`FogExp2( color : Integer, density : Float )`构造线性雾化效果。
+使用 `FogExp2( color : Integer, density : Float )` 构造线性雾化效果。
 > ##### .color : Color
 >雾的颜色。比如说，如果将其设置为黑色，远处的物体将被渲染成黑色。
 > ##### .density : Float
 >定义雾的密度将会增长多块。
 >默认值是0.00025
+
+### 9.加载gltf模型
+导入gltf加载器 `import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";` 
+#### 加载模型代码
+```js
+// 实例化gltf加载器
+const gltfLoader = new GLTFLoader();
+
+// 加载模型
+gltfLoader.load("./modern_city_block.glb", gltf => {
+    scene.add(gltf.scene);
+});
+```
+
+### 10.Tween补间动画
+#### 基本使用
+1. 导入Tween `import TWEEN from "three/examples/jsm/libs/tween.module.js";`
+2. 实例化Tween对象 `const tween = new TWEEN.Tween(sphere1.position);` 参数是需要动画的值。
+3. 动画的目标状态 `tween.to({ x: 4 }, 1000);` 第一个参数是目标状态，第二个参数是所用时间。
+4. 在渲染函数中实时更新 `TWEEN.update();` 写在每帧执行一次的函数中。
+5. 补间动画开始 `tween.start();` 。
+6. 补间动画暂停 `tween.start();` 。
+7. 设置动画循环 `tween.repeat(Infinity);` 参数是次数，Infinity表示无限次。
+8. 设置循环往复 `tween.yoyo(true)` 会在动画到达目标状态后再以同样的方式回到原点。
+9. 设置动画延迟 `tween.delay(3000)` 会在一定时间的延迟后再开始动画，参数是毫秒。
+10. 缓动动画 `tween.easing(TWEEN.Easing.Elastic.InOut)` 参数列表：[网址](https://tweenjs.github.io/tween.js/examples/03_graphs.html)。
+11. 链接多个动画先后执行 `tween.chain(tween2);` 参数是执行完此动画后要执行的动画。
+#### tween的回调函数
+- 动画开始时的回调函数 `tween.onStart(() => {});`
+- 动画更新的时候的回调函数 `tween.onUpdate(() => {});`
+- 动画完成的时候的回调函数 `tween.onComplate(() => {});`
+- 动画暂停的时候的回调函数 `tween.onStop(() => {});`
+#### 代码示例
+```js
+// 渲染动画
+function animate() {
+    controls.update();
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+    // 更新tween
+    TWEEN.update();
+}
+animate();
+
+// 创建一个球
+const sphere1 = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 32, 32),
+    new THREE.MeshBasicMaterial({
+        color: '#0f0'
+    })
+);
+scene.add(sphere1);
+
+// 实例化Tween对象
+const tween = new TWEEN.Tween(sphere1.position);
+// 支持链式编程，也可以分开写
+tween.to({ x: 4 }, 1000).delay(500).easing(TWEEN.Easing.Elastic.InOut);
+
+// 创建多个动画
+const tween2 = new TWEEN.Tween(sphere1.position);
+tween2.to({ z: 4 }, 500).delay(500).easing(TWEEN.Easing.Quadratic.InOut);
+const tween3 = new TWEEN.Tween(sphere1.position);
+tween3.to({ x: 0, z: 0 }, 1000).delay(500).easing(TWEEN.Easing.Quadratic.InOut);
+
+// 链接多个动画
+tween.chain(tween2);
+tween2.chain(tween3);
+tween3.chain(tween);
+
+// 回调函数，也可以链式的写
+tween.onStart(() => {
+    console.log('第一个动画开始啦！');
+});
+
+// 启动补间动画
+tween.start();
+```
