@@ -11,6 +11,10 @@ import * as THREE from "three";
 // 导入轨道控制器
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { Water } from "three/examples/jsm/objects/Water2";
 
 // 创建场景
 const scene = new THREE.Scene();
@@ -24,19 +28,22 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // 创建渲染器
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+    // 设置抗锯齿
+    antialias: true
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio( window.devicePixelRatio );
+// 设置色调映射
+renderer.toneMapping = THREE.CustomToneMapping;
+renderer.toneMappingExposure = 0.5;
+renderer.shadowMap.enable = true;
 document.body.appendChild(renderer.domElement);
 
 // 设置相机位置
-camera.position.z = 10;
-camera.position.x = 2;
-camera.position.y = 2;
 camera.lookAt(0, 0, 0);
-
-// 添加世界坐标辅助器
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
+camera.position.set(-3.23, 2.98, 4.06);
+camera.updateProjectionMatrix();
 
 // 添加轨道控制器
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -45,9 +52,9 @@ controls.dampingFactor = 0.05;
 
 // 渲染动画
 function animate() {
-    controls.update();
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    controls.update();
 }
 animate();
 
@@ -57,46 +64,64 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 });
 
-// 使用标准网格材质创建一个球（基础网格材质不能对光照产生反应）
-const sphereGeometry = new THREE.SphereGeometry(1, 36, 36);
-const material = new THREE.MeshStandardMaterial();
-const sphere = new THREE.Mesh(sphereGeometry, material);
-scene.add(sphere);
+// 加载压缩模型
+// 初始化loader
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("./draco/");
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
 
-// 在球下创建一个平面
-const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
-    new THREE.MeshStandardMaterial({
-        side: THREE.DoubleSide
-    })
-);
-plane.position.set(0, -2, 0);
-plane.rotation.x = -Math.PI / 2;
-scene.add(plane);
+// 加载模型
+gltfLoader.load("./Christmas/model/scene.glb", gltf => {
+    console.log(gltf);
+    const model = gltf.scene;
 
-// 灯光
-// 环境光
-const light = new THREE.AmbientLight('#fff', 0.5);
+    // 不使用原本的平面，自己创建水面，所以隐藏原本的水面
+    model.traverse(child => {
+        if(child.name === 'Plane'){
+            child.visible = false;
+        }
+        if(child.isMesh){
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    scene.add(model);
+});
+// 创建水面
+const waterGeometry = new THREE.PlaneGeometry(200, 200);
+const water = new Water(waterGeometry, {
+    textureWidth: 1024,
+	textureHeight: 1024,
+    color: '#fff',
+    flowDirection: new THREE.Vector2( 1, 1 ),
+    scale: 3
+});
+water.rotation.x = -Math.PI / 2;
+water.position.y = -1;
+scene.add(water);
+
+// 添加光源
+const light = new THREE.DirectionalLight('#fff', 1);
+light.position.set(0, 50, 0);
 scene.add(light);
-// 直线光源
-const directionalLight = new THREE.DirectionalLight('#fff', 0.5);
-directionalLight.position.set(5, 10, 5);
-scene.add(directionalLight);
 
-// 开启物体阴影
-// 设置渲染器开启阴影计算
-renderer.shadowMap.enabled = true;
-// 设置光照投射产生阴影
-directionalLight.castShadow = true;
-// 设置物体投射阴影
-sphere.castShadow = true;
-// 设置物体接收阴影
-plane.receiveShadow = true;
+// 添加点光源
+const pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
+pointLight.position.set(1.1, 1.4, 0);
+pointLight.castShadow = true;
+scene.add(pointLight);
 
-// 设置贴图的阴影模糊度
-directionalLight.shadow.radius = 20;
-// 设置阴影贴图的分辨率
-directionalLight.shadow.mapSize.set(1024, 1024);
+// 加载环境纹理
+const rgbeLoader = new RGBELoader();
+// 载入天空
+rgbeLoader.load("./Christmas/textures/sky.hdr", textrue => {
+    textrue.mapping = THREE.EquirectangularRefractionMapping;
+    scene.background = textrue;
+    scene.environment = textrue;
+});
+
 </script>
 
 <style scoped></style>

@@ -77,6 +77,12 @@ const asyncRoutes = [
         meta: { title: '12.阴影'},
         component: () => import("@/views/12-阴影.vue"),
     },
+    {
+        path: '/13',
+        name: '13',
+        meta: { title: '13.圣诞节', project: true },
+        component: () => import("@/views/13-圣诞节实战项目.vue"),
+    },
 ];
 
 export default asyncRoutes;
