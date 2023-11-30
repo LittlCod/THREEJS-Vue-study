@@ -71,6 +71,12 @@ const asyncRoutes = [
         meta: { title: '11.Tween补间动画'},
         component: () => import("@/views/11-Tween.vue"),
     },
+    {
+        path: '/12',
+        name: '12',
+        meta: { title: '12.阴影'},
+        component: () => import("@/views/12-阴影.vue"),
+    },
 ];
 
 export default asyncRoutes;

@@ -425,3 +425,15 @@ tween.onStart(() => {
 // 启动补间动画
 tween.start();
 ```
+
+### 11.光照与阴影
+基础网格材质不会对光照产生效果，所以需要使用其他材质，比如标准网格材质。
+#### 给物体开启阴影显示
+1. 材质要满足能够对光照有反应
+2. 设置渲染器开启阴影计算 `renderer.shadowMap.enabled = true;`
+3. 设置光照投射阴影 `DirectionalLight.castShadow = true;` 将光源的castShadow属性设置为true，即可让被照射的物体产生阴影。
+4. 设置物体投射阴影 `Object3D.castShadow = true;` 将物体的castShadow属性设为true，即可将物体的阴影投射到其他物体上。
+5. 设置物体接收阴影 `Object3D.receiveShadow = true;` 将物体的receiveShadow属性设为true，即可接收其他物体的阴影投射。
+#### 阴影的属性
+- 设置贴图的阴影模糊度 `directionalLight.shadow.radius = 20;`
+- 设置阴影贴图的分辨率 `directionalLight.shadow.mapSize.set(1024, 1024);`

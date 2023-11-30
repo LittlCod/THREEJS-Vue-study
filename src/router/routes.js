@@ -1,10 +1,10 @@
 import asyncRoutes from './asyncRoutes';
 
 const routes = [
-    // {
-    //     path: '/',
-    //     redirect: '/home'
-    // },
+    {
+        path: '/',
+        redirect: '/home'
+    },
     // {
     //     path: '/home',
     //     name: 'home',
